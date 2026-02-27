@@ -37,16 +37,20 @@
     }
     .taux-container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 5px;
+      flex-direction: column;
       border: 2px solid #3498db;
       border-radius: 6px;
       padding: 5px;
       background-color: #eaf2fb;
     }
-    .taux-container input {
-      width: 48%;
+    .taux-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .taux-row input {
+      width: 100%;
       padding: 8px;
       font-size: 16px;
       box-sizing: border-box;
@@ -54,17 +58,17 @@
       border-radius: 4px;
       transition: border-color 0.3s, background-color 0.3s;
     }
-    .taux-container input:focus {
+    .taux-row input:focus {
       border-color: #2980b9;
       background-color: #d6eaf8;
       outline: none;
     }
     .taux-ou {
       text-align: center;
-      width: 4%;
       font-weight: bold;
       color: #555;
       font-size: 16px;
+      margin: 4px 0;
     }
     #result {
       margin-top: 20px;
@@ -100,9 +104,15 @@
   <div class="field-group">
     <label>Taux applicable</label>
     <div class="taux-container">
-      <input type="number" step="any" id="pourcentage" placeholder="%">
-      <div class="taux-ou">ou</div>
-      <input type="number" step="any" id="coefficient" placeholder="Coefficient">
+      <div class="taux-row">
+        <input type="number" step="any" id="pourcentage" placeholder="%">
+        <span>%</span>
+      </div>
+      <div class="taux-ou">OU</div>
+      <div class="taux-row">
+        <input type="number" step="any" id="coefficient" placeholder="Coefficient">
+        <span>Coef</span>
+      </div>
     </div>
   </div>
 
@@ -131,13 +141,11 @@
     const btn = document.getElementById('calculer');
     const resetBtn = document.getElementById('reset');
 
-    // Conversion nombre correct (virgule → point)
     const parseNumber = (val) => {
       if (!val) return NaN;
       return parseFloat(val.toString().replace(',', '.'));
     };
 
-    // Charger les valeurs depuis localStorage
     window.addEventListener('load', () => {
       if(localStorage.getItem('prixAchat')) prixAchat.value = localStorage.getItem('prixAchat');
       if(localStorage.getItem('pourcentage')) pourcentage.value = localStorage.getItem('pourcentage');
@@ -147,7 +155,6 @@
       if(localStorage.getItem('result')) result.textContent = localStorage.getItem('result');
     });
 
-    // Synchronisation Pourcentage <-> Coefficient
     const syncTaux = (source) => {
       const achat = parseNumber(prixAchat.value);
       if (!achat) return;
@@ -168,7 +175,6 @@
     pourcentage.addEventListener('input', () => syncTaux('pourcentage'));
     coefficient.addEventListener('input', () => syncTaux('coefficient'));
 
-    // Calcul complet au clic
     const calculate = () => {
       let achat = parseNumber(prixAchat.value);
       let pourc = parseNumber(pourcentage.value);
@@ -179,47 +185,36 @@
       let computedAchat = achat;
       let computedVente, computedBenef, computedCoef, computedPourc;
 
-      // Cas 1 : Prix d'achat + Taux
       if(!isNaN(achat) && (!isNaN(pourc) || !isNaN(coef))) {
         const c = !isNaN(coef) ? coef : 1 + pourc / 100;
         computedVente = achat * c;
         computedBenef = computedVente - achat;
         computedCoef = c;
         computedPourc = (c - 1) * 100;
-      } 
-      // Cas 2 : Prix d'achat + Bénéfice
-      else if(!isNaN(achat) && !isNaN(benef)) {
+      } else if(!isNaN(achat) && !isNaN(benef)) {
         computedVente = achat + benef;
         computedBenef = benef;
         computedCoef = computedVente / achat;
         computedPourc = (computedCoef - 1) * 100;
-      } 
-      // Cas 3 : Prix d'achat + Prix de vente
-      else if(!isNaN(achat) && !isNaN(vente)) {
+      } else if(!isNaN(achat) && !isNaN(vente)) {
         computedVente = vente;
         computedBenef = computedVente - achat;
         computedCoef = computedVente / achat;
         computedPourc = (computedCoef - 1) * 100;
-      } 
-      // Cas 4 : Prix de vente + Taux
-      else if(!isNaN(vente) && (!isNaN(pourc) || !isNaN(coef))) {
+      } else if(!isNaN(vente) && (!isNaN(pourc) || !isNaN(coef))) {
         const c = !isNaN(coef) ? coef : 1 + pourc / 100;
         computedAchat = vente / c;
         computedVente = vente;
         computedBenef = computedVente - computedAchat;
         computedCoef = c;
         computedPourc = (c - 1) * 100;
-      } 
-      // Cas 5 : Prix de vente + Bénéfice
-      else if(!isNaN(vente) && !isNaN(benef)) {
+      } else if(!isNaN(vente) && !isNaN(benef)) {
         computedAchat = vente - benef;
         computedVente = vente;
         computedBenef = benef;
         computedCoef = computedVente / computedAchat;
         computedPourc = (computedCoef - 1) * 100;
-      } 
-      // Cas 6 : Bénéfice + Taux
-      else if(!isNaN(benef) && (!isNaN(pourc) || !isNaN(coef))) {
+      } else if(!isNaN(benef) && (!isNaN(pourc) || !isNaN(coef))) {
         const c = !isNaN(coef) ? coef : 1 + pourc / 100;
         computedAchat = benef / (c - 1);
         computedVente = computedAchat * c;
