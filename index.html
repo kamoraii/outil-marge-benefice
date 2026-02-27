@@ -157,7 +157,7 @@
     pourcentage.addEventListener('input', () => syncTaux('pourcentage'));
     coefficient.addEventListener('input', () => syncTaux('coefficient'));
 
-    // Calcul interactif bidirectionnel
+    // Calcul interactif au clic seulement
     const calculate = () => {
       const achat = parseFloat(prixAchat.value);
       const pourc = parseFloat(pourcentage.value);
@@ -168,47 +168,36 @@
       let computedAchat = achat;
       let computedVente, computedBenef, computedCoef, computedPourc;
 
-      // 1) Si prix d'achat + pourcentage ou coefficient
       if(!isNaN(achat) && (!isNaN(pourc) || !isNaN(coef))) {
         const c = !isNaN(coef) ? coef : 1 + pourc / 100;
         computedVente = achat * c;
         computedBenef = computedVente - achat;
         computedCoef = c;
         computedPourc = (c - 1) * 100;
-      }
-      // 2) Si prix d'achat + bénéfice
-      else if(!isNaN(achat) && !isNaN(benef)) {
+      } else if(!isNaN(achat) && !isNaN(benef)) {
         computedVente = achat + benef;
         computedBenef = benef;
         computedCoef = computedVente / achat;
         computedPourc = (computedCoef - 1) * 100;
-      }
-      // 3) Si prix d'achat + prix de vente
-      else if(!isNaN(achat) && !isNaN(vente)) {
+      } else if(!isNaN(achat) && !isNaN(vente)) {
         computedVente = vente;
         computedBenef = computedVente - achat;
         computedCoef = computedVente / achat;
         computedPourc = (computedCoef - 1) * 100;
-      }
-      // 4) Si prix de vente + pourcentage ou coefficient
-      else if(!isNaN(vente) && (!isNaN(pourc) || !isNaN(coef))) {
+      } else if(!isNaN(vente) && (!isNaN(pourc) || !isNaN(coef))) {
         const c = !isNaN(coef) ? coef : 1 + pourc / 100;
         computedAchat = vente / c;
         computedVente = vente;
         computedBenef = computedVente - computedAchat;
         computedCoef = c;
         computedPourc = (c - 1) * 100;
-      }
-      // 5) Si prix de vente + bénéfice
-      else if(!isNaN(vente) && !isNaN(benef)) {
+      } else if(!isNaN(vente) && !isNaN(benef)) {
         computedAchat = vente - benef;
         computedVente = vente;
         computedBenef = benef;
         computedCoef = computedVente / computedAchat;
         computedPourc = (computedCoef - 1) * 100;
-      }
-      // 6) Si bénéfice + pourcentage ou coefficient
-      else if(!isNaN(benef) && (!isNaN(pourc) || !isNaN(coef))) {
+      } else if(!isNaN(benef) && (!isNaN(pourc) || !isNaN(coef))) {
         const c = !isNaN(coef) ? coef : 1 + pourc / 100;
         computedAchat = benef / (c - 1);
         computedVente = computedAchat * c;
@@ -224,7 +213,6 @@
       pourcentage.value = computedPourc ? computedPourc.toFixed(2) : '';
       result.textContent = computedBenef ? `Bénéfice net : ${computedBenef.toFixed(2)} €` : '';
 
-      // Sauvegarde localStorage
       localStorage.setItem('prixAchat', prixAchat.value);
       localStorage.setItem('prixVente', prixVente.value);
       localStorage.setItem('benefice', benefice.value);
@@ -235,7 +223,6 @@
 
     btn.addEventListener('click', calculate);
 
-    // Remise à zéro
     resetBtn.addEventListener('click', () => {
       prixAchat.value = '';
       pourcentage.value = '';
@@ -245,13 +232,6 @@
       result.textContent = '';
       localStorage.clear();
     });
-
-    // Mise à jour dynamique à la frappe pour taux
-    pourcentage.addEventListener('input', calculate);
-    coefficient.addEventListener('input', calculate);
-    prixAchat.addEventListener('input', calculate);
-    prixVente.addEventListener('input', calculate);
-    benefice.addEventListener('input', calculate);
   </script>
 </body>
 </html>
