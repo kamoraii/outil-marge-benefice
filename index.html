@@ -20,36 +20,11 @@
       position: relative;
     }
 
-    #billets-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .billet {
-      position: absolute;
-      font-size: 20px;
-      color: #27ae60;
-      opacity: 0.8;
-      animation-name: tomber;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-
-    @keyframes tomber {
-      0% { transform: translateY(-50px) rotate(0deg); }
-      100% { transform: translateY(110vh) rotate(360deg); }
-    }
-
     h1 {
       text-align: center;
       margin-bottom: 25px;
       font-size: 28px;
+      font-weight: bold;
       color: #ffffff;
     }
 
@@ -69,11 +44,12 @@
       width: 100%;
       padding: 10px;
       font-size: 16px;
+      font-weight: 600; /* un peu plus gras */
       box-sizing: border-box;
       border: 2px solid #3498db;
       border-radius: 6px;
-      background-color: #e0e0e0; /* fond clair pour les inputs */
-      color: #000000; /* texte noir pour chiffres */
+      background-color: #e0e0e0; /* fond clair pour inputs */
+      color: #000000; /* chiffres noirs */
       text-align: left;
       transition: border-color 0.3s, background-color 0.3s;
     }
@@ -104,6 +80,7 @@
       width: 100%;
       padding: 8px;
       font-size: 16px;
+      font-weight: 600;
       border: 2px solid #3498db;
       border-radius: 4px;
       background-color: #e0e0e0;
@@ -144,6 +121,7 @@
       width: 100%;
       padding: 12px;
       font-size: 16px;
+      font-weight: bold;
       background-color: #3498db;
       color: white;
       border: none;
@@ -168,8 +146,6 @@
   </style>
 </head>
 <body>
-  <div id="billets-bg"></div>
-
   <h1>Calculateur de marge et bénéfice</h1>
 
   <div class="field-group">
@@ -208,18 +184,6 @@
   <div id="result"></div>
 
   <script>
-    const billetsContainer = document.getElementById('billets-bg');
-    const nbBillets = 25;
-    for(let i=0;i<nbBillets;i++){
-      const span = document.createElement('div');
-      span.className = 'billet';
-      span.style.left = Math.random()*100 + 'vw';
-      span.style.fontSize = 16 + Math.random()*24 + 'px';
-      span.style.animationDuration = 5 + Math.random()*5 + 's';
-      span.textContent = '💵';
-      billetsContainer.appendChild(span);
-    }
-
     const prixAchat = document.getElementById('prixAchat');
     const pourcentage = document.getElementById('pourcentage');
     const coefficient = document.getElementById('coefficient');
