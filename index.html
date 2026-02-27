@@ -93,6 +93,15 @@
     const result = document.getElementById('result');
     const btn = document.getElementById('calculer');
 
+    // Charger les valeurs depuis localStorage au chargement
+    window.addEventListener('load', () => {
+      if(localStorage.getItem('prixAchat')) prixAchat.value = localStorage.getItem('prixAchat');
+      if(localStorage.getItem('pourcentage')) pourcentage.value = localStorage.getItem('pourcentage');
+      if(localStorage.getItem('prixVente')) prixVente.value = localStorage.getItem('prixVente');
+      if(localStorage.getItem('benefice')) benefice.value = localStorage.getItem('benefice');
+      if(localStorage.getItem('result')) result.textContent = localStorage.getItem('result');
+    });
+
     btn.addEventListener('click', () => {
       const achat = parseFloat(prixAchat.value);
       const pourc = parseFloat(pourcentage.value);
@@ -124,6 +133,13 @@
       if(computedPourc) pourcentage.value = computedPourc.toFixed(2);
 
       result.textContent = computedBenefice ? `Bénéfice net : ${computedBenefice.toFixed(2)} €` : '';
+
+      // Sauvegarder les valeurs dans localStorage
+      localStorage.setItem('prixAchat', prixAchat.value);
+      localStorage.setItem('pourcentage', pourcentage.value);
+      localStorage.setItem('prixVente', prixVente.value);
+      localStorage.setItem('benefice', benefice.value);
+      localStorage.setItem('result', result.textContent);
     });
   </script>
 </body>
