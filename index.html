@@ -5,19 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculateur de marge et bénéfice</title>
 
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="favicon.png">
+  <!-- Favicon avec cache busting -->
+  <link rel="icon" href="favicon.png?v=20260227" type="image/png">
+  <link rel="apple-touch-icon" href="favicon.png?v=20260227">
 
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      color: #000000;
-      background: linear-gradient(to bottom right, #d8b4f2, #f9c0c0); /* dégradé mauve → rose */
-      overflow-x: hidden;
+      color: #ffffff;
+      background: #4b4b4b; /* granite foncé de base */
       position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Lignes animées discrètes */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.02),
+        rgba(255,255,255,0.02) 1px,
+        rgba(255,255,255,0) 2px
+      );
+      z-index: 0;
+      animation: linesMove 15s linear infinite;
+    }
+
+    @keyframes linesMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 100px 100px; }
     }
 
     h1 {
@@ -25,11 +46,15 @@
       margin-bottom: 25px;
       font-size: 28px;
       font-weight: bold;
-      color: #2c2c2c;
+      color: #ffffff;
+      position: relative;
+      z-index: 1;
     }
 
     .field-group {
       margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
     }
 
     label {
@@ -37,36 +62,38 @@
       margin-bottom: 5px;
       font-weight: bold;
       font-size: 16px;
-      color: #2c2c2c;
+      color: #ffffff;
     }
 
     input {
       width: 100%;
       padding: 10px;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700; /* plus gras */
       box-sizing: border-box;
-      border: 2px solid #555555;
+      border: 2px solid #aaaaaa;
       border-radius: 6px;
-      background-color: rgba(255,255,255,0.9); /* fond clair semi-transparent */
-      color: #000000;
+      background-color: rgba(255,255,255,0.15); /* clair semi-transparent */
+      color: #ffffff;
       text-align: left;
       transition: border-color 0.3s, background-color 0.3s;
     }
 
     input:focus {
-      border-color: #333333;
-      background-color: #ffffff;
+      border-color: #ffffff;
+      background-color: rgba(255,255,255,0.3);
       outline: none;
     }
 
     .taux-container {
       display: flex;
       flex-direction: column;
-      border: 2px solid #555555;
+      border: 2px solid #aaaaaa;
       border-radius: 6px;
       padding: 8px;
-      background-color: rgba(200,200,200,0.3);
+      background-color: rgba(255,255,255,0.1);
+      position: relative;
+      z-index: 1;
     }
 
     .taux-row {
@@ -80,11 +107,11 @@
       width: 100%;
       padding: 8px;
       font-size: 16px;
-      font-weight: 600;
-      border: 2px solid #555555;
+      font-weight: 700;
+      border: 2px solid #aaaaaa;
       border-radius: 4px;
-      background-color: rgba(255,255,255,0.9);
-      color: #000000;
+      background-color: rgba(255,255,255,0.15);
+      color: #ffffff;
       text-align: left;
     }
 
@@ -93,13 +120,13 @@
       min-width: 40px;
       text-align: center;
       font-size: 16px;
-      color: #2c2c2c;
+      color: #ffffff;
     }
 
     .taux-ou {
       text-align: center;
       font-weight: bold;
-      color: #555555;
+      color: #cccccc;
       font-size: 16px;
       margin: 4px 0;
     }
@@ -109,7 +136,9 @@
       font-size: 22px;
       font-weight: bold;
       text-align: center;
-      color: #e74c3c; /* bénéfice en rouge */
+      color: #ff4c4c; /* bénéfice en rouge */
+      position: relative;
+      z-index: 1;
     }
 
     #result span {
@@ -129,6 +158,8 @@
       margin-top: 10px;
       border-radius: 6px;
       transition: background-color 0.3s;
+      position: relative;
+      z-index: 1;
     }
 
     button:hover {
@@ -183,6 +214,7 @@
 
   <div id="result"></div>
 
+  <script src="script.js?v=20260227"></script> <!-- cache busting -->
   <script>
     const prixAchat = document.getElementById('prixAchat');
     const pourcentage = document.getElementById('pourcentage');
