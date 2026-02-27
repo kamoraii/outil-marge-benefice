@@ -15,12 +15,12 @@
       margin: 0;
       padding: 20px;
       color: #ffffff;
-      background: #4b4b4b; /* granite foncé de base */
+      background: #2b2b2b; /* granite foncé plus soutenu */
       position: relative;
       overflow-x: hidden;
     }
 
-    /* Lignes animées discrètes */
+    /* Lignes animées discrètes derrière tout */
     body::before {
       content: '';
       position: fixed;
@@ -71,27 +71,27 @@
       font-size: 16px;
       font-weight: 700; /* plus gras */
       box-sizing: border-box;
-      border: 2px solid #aaaaaa;
+      border: 2px solid #cccccc; /* contour clair pour contraste */
       border-radius: 6px;
-      background-color: rgba(255,255,255,0.15); /* clair semi-transparent */
-      color: #ffffff;
+      background-color: #f0f0f0; /* fond clair pour contraste avec texte noir */
+      color: #000000; /* texte noir pour lisibilité */
       text-align: left;
       transition: border-color 0.3s, background-color 0.3s;
     }
 
     input:focus {
       border-color: #ffffff;
-      background-color: rgba(255,255,255,0.3);
+      background-color: #ffffff;
       outline: none;
     }
 
     .taux-container {
       display: flex;
       flex-direction: column;
-      border: 2px solid #aaaaaa;
+      border: 2px solid #cccccc;
       border-radius: 6px;
       padding: 8px;
-      background-color: rgba(255,255,255,0.1);
+      background-color: #3a3a3a; /* foncé mais contrasté avec inputs */
       position: relative;
       z-index: 1;
     }
@@ -108,10 +108,10 @@
       padding: 8px;
       font-size: 16px;
       font-weight: 700;
-      border: 2px solid #aaaaaa;
+      border: 2px solid #cccccc;
       border-radius: 4px;
-      background-color: rgba(255,255,255,0.15);
-      color: #ffffff;
+      background-color: #f0f0f0;
+      color: #000000;
       text-align: left;
     }
 
