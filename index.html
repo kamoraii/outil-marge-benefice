@@ -10,18 +10,40 @@
   <link rel="apple-touch-icon" href="favicon.png">
 
   <style>
+    /* Corps de la page */
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f8ff; /* Bleu clair pour le fond de page */
       margin: 0;
       padding: 20px;
-      color: #333;
+      color: #2c3e50;
+      background: linear-gradient(to bottom, #ffe6b3, #ffcccc);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animation billets */
+    .billet {
+      position: absolute;
+      top: -50px;
+      font-size: 20px;
+      color: #27ae60;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.8;
+      animation-name: tomber;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes tomber {
+      0% { transform: translateY(-50px) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
     }
 
     h1 {
       text-align: center;
-      color: #2c3e50;
       margin-bottom: 25px;
+      font-size: 28px;
     }
 
     .field-group {
@@ -42,9 +64,9 @@
       box-sizing: border-box;
       border: 2px solid #3498db;
       border-radius: 6px;
-      background-color: #ffffff; /* fond des champs blanc pour contraste */
-      color: #2c3e50; /* texte des chiffres foncé mais pas noir */
-      text-align: left; /* chiffres alignés à gauche */
+      background-color: #ffffff;
+      color: #2c3e50;
+      text-align: left;
       transition: border-color 0.3s, background-color 0.3s;
     }
 
@@ -60,7 +82,7 @@
       border: 2px solid #3498db;
       border-radius: 6px;
       padding: 8px;
-      background-color: #e0f7fa; /* fond légèrement bleu clair pour Taux */
+      background-color: #d0f0fd;
     }
 
     .taux-row {
@@ -78,7 +100,7 @@
       border-radius: 4px;
       background-color: #ffffff;
       color: #2c3e50;
-      text-align: left; /* chiffres alignés à gauche */
+      text-align: left;
     }
 
     .taux-row span {
@@ -170,6 +192,18 @@
   <div id="result"></div>
 
   <script>
+    // Génération des billets animés
+    const nbBillets = 20;
+    for(let i=0; i<nbBillets; i++){
+      const span = document.createElement('div');
+      span.className = 'billet';
+      span.style.left = Math.random() * 100 + 'vw';
+      span.style.fontSize = 16 + Math.random() * 24 + 'px';
+      span.style.animationDuration = 5 + Math.random() * 5 + 's';
+      span.textContent = '💵';
+      document.body.appendChild(span);
+    }
+
     const prixAchat = document.getElementById('prixAchat');
     const pourcentage = document.getElementById('pourcentage');
     const coefficient = document.getElementById('coefficient');
