@@ -39,15 +39,28 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-top: 5px;
     }
     .taux-container input {
       width: 48%;
+      padding: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s, background-color 0.3s;
+    }
+    .taux-container input:focus {
+      border-color: #3498db;
+      background-color: #eaf2fb;
+      outline: none;
     }
     .taux-ou {
       text-align: center;
       width: 4%;
       font-weight: bold;
       color: #555;
+      font-size: 16px;
     }
     #result {
       margin-top: 20px;
