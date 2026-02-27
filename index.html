@@ -10,7 +10,6 @@
   <link rel="apple-touch-icon" href="favicon.png">
 
   <style>
-    /* Corps de la page */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -21,14 +20,22 @@
       position: relative;
     }
 
-    /* Animation billets */
+    /* Conteneur des billets derrière tout */
+    #billets-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Derrière tout */
+      pointer-events: none; /* Interactions sur le contenu restent possibles */
+      overflow: hidden;
+    }
+
     .billet {
       position: absolute;
-      top: -50px;
       font-size: 20px;
       color: #27ae60;
-      user-select: none;
-      pointer-events: none;
       opacity: 0.8;
       animation-name: tomber;
       animation-timing-function: linear;
@@ -65,7 +72,7 @@
       border: 2px solid #3498db;
       border-radius: 6px;
       background-color: #ffffff;
-      color: #2c3e50;
+      color: #000000; /* Chiffres en noir */
       text-align: left;
       transition: border-color 0.3s, background-color 0.3s;
     }
@@ -99,7 +106,7 @@
       border: 2px solid #3498db;
       border-radius: 4px;
       background-color: #ffffff;
-      color: #2c3e50;
+      color: #000000;
       text-align: left;
     }
 
@@ -123,7 +130,12 @@
       font-size: 22px;
       font-weight: bold;
       text-align: center;
-      color: #e74c3c;
+      color: #e74c3c; /* bénéfice en rouge */
+    }
+
+    #result span {
+      font-size: 20px;
+      margin-left: 8px;
     }
 
     button {
@@ -154,6 +166,8 @@
   </style>
 </head>
 <body>
+  <div id="billets-bg"></div>
+
   <h1>Calculateur de marge et bénéfice</h1>
 
   <div class="field-group">
@@ -192,16 +206,17 @@
   <div id="result"></div>
 
   <script>
-    // Génération des billets animés
-    const nbBillets = 20;
-    for(let i=0; i<nbBillets; i++){
+    // Billets derrière
+    const billetsContainer = document.getElementById('billets-bg');
+    const nbBillets = 25;
+    for(let i=0;i<nbBillets;i++){
       const span = document.createElement('div');
       span.className = 'billet';
-      span.style.left = Math.random() * 100 + 'vw';
-      span.style.fontSize = 16 + Math.random() * 24 + 'px';
-      span.style.animationDuration = 5 + Math.random() * 5 + 's';
+      span.style.left = Math.random()*100 + 'vw';
+      span.style.fontSize = 16 + Math.random()*24 + 'px';
+      span.style.animationDuration = 5 + Math.random()*5 + 's';
       span.textContent = '💵';
-      document.body.appendChild(span);
+      billetsContainer.appendChild(span);
     }
 
     const prixAchat = document.getElementById('prixAchat');
@@ -213,10 +228,7 @@
     const btn = document.getElementById('calculer');
     const resetBtn = document.getElementById('reset');
 
-    const parseNumber = (val) => {
-      if (!val) return NaN;
-      return parseFloat(val.toString().replace(',', '.'));
-    };
+    const parseNumber = (val) => val ? parseFloat(val.toString().replace(',', '.')) : NaN;
 
     window.addEventListener('load', () => {
       if(localStorage.getItem('prixAchat')) prixAchat.value = localStorage.getItem('prixAchat');
@@ -224,28 +236,23 @@
       if(localStorage.getItem('coefficient')) coefficient.value = localStorage.getItem('coefficient');
       if(localStorage.getItem('prixVente')) prixVente.value = localStorage.getItem('prixVente');
       if(localStorage.getItem('benefice')) benefice.value = localStorage.getItem('benefice');
-      if(localStorage.getItem('result')) result.textContent = localStorage.getItem('result');
+      if(localStorage.getItem('result')) result.innerHTML = localStorage.getItem('result');
     });
 
     const syncTaux = (source) => {
       const achat = parseNumber(prixAchat.value);
       if (!achat) return;
-
-      if (source === 'pourcentage') {
+      if (source==='pourcentage'){
         const val = parseNumber(pourcentage.value);
-        if (!isNaN(val)) {
-          coefficient.value = (1 + val / 100).toFixed(3);
-        } else coefficient.value = '';
-      } else if (source === 'coefficient') {
+        coefficient.value = !isNaN(val)? (1+val/100).toFixed(3): '';
+      } else {
         const val = parseNumber(coefficient.value);
-        if (!isNaN(val)) {
-          pourcentage.value = ((val - 1) * 100).toFixed(2);
-        } else pourcentage.value = '';
+        pourcentage.value = !isNaN(val)? ((val-1)*100).toFixed(2): '';
       }
     };
 
-    pourcentage.addEventListener('input', () => syncTaux('pourcentage'));
-    coefficient.addEventListener('input', () => syncTaux('coefficient'));
+    pourcentage.addEventListener('input', ()=>syncTaux('pourcentage'));
+    coefficient.addEventListener('input', ()=>syncTaux('coefficient'));
 
     const calculate = () => {
       let achat = parseNumber(prixAchat.value);
@@ -258,67 +265,67 @@
       let computedVente, computedBenef, computedCoef, computedPourc;
 
       if(!isNaN(achat) && (!isNaN(pourc) || !isNaN(coef))) {
-        const c = !isNaN(coef) ? coef : 1 + pourc / 100;
-        computedVente = achat * c;
-        computedBenef = computedVente - achat;
+        const c = !isNaN(coef)? coef : 1+pourc/100;
+        computedVente = achat*c;
+        computedBenef = computedVente-achat;
         computedCoef = c;
-        computedPourc = (c - 1) * 100;
+        computedPourc = (c-1)*100;
       } else if(!isNaN(achat) && !isNaN(benef)) {
-        computedVente = achat + benef;
+        computedVente = achat+benef;
         computedBenef = benef;
-        computedCoef = computedVente / achat;
-        computedPourc = (computedCoef - 1) * 100;
+        computedCoef = computedVente/achat;
+        computedPourc = (computedCoef-1)*100;
       } else if(!isNaN(achat) && !isNaN(vente)) {
         computedVente = vente;
-        computedBenef = computedVente - achat;
-        computedCoef = computedVente / achat;
-        computedPourc = (computedCoef - 1) * 100;
+        computedBenef = computedVente-achat;
+        computedCoef = computedVente/achat;
+        computedPourc = (computedCoef-1)*100;
       } else if(!isNaN(vente) && (!isNaN(pourc) || !isNaN(coef))) {
-        const c = !isNaN(coef) ? coef : 1 + pourc / 100;
-        computedAchat = vente / c;
+        const c = !isNaN(coef)? coef : 1+pourc/100;
+        computedAchat = vente/c;
         computedVente = vente;
-        computedBenef = computedVente - computedAchat;
+        computedBenef = computedVente-computedAchat;
         computedCoef = c;
-        computedPourc = (c - 1) * 100;
+        computedPourc = (c-1)*100;
       } else if(!isNaN(vente) && !isNaN(benef)) {
-        computedAchat = vente - benef;
+        computedAchat = vente-benef;
         computedVente = vente;
         computedBenef = benef;
-        computedCoef = computedVente / computedAchat;
-        computedPourc = (computedCoef - 1) * 100;
+        computedCoef = computedVente/computedAchat;
+        computedPourc = (computedCoef-1)*100;
       } else if(!isNaN(benef) && (!isNaN(pourc) || !isNaN(coef))) {
-        const c = !isNaN(coef) ? coef : 1 + pourc / 100;
-        computedAchat = benef / (c - 1);
-        computedVente = computedAchat * c;
+        const c = !isNaN(coef)? coef : 1+pourc/100;
+        computedAchat = benef/(c-1);
+        computedVente = computedAchat*c;
         computedBenef = benef;
         computedCoef = c;
-        computedPourc = (c - 1) * 100;
+        computedPourc = (c-1)*100;
       }
 
-      prixAchat.value = computedAchat ? computedAchat.toFixed(2) : '';
-      prixVente.value = computedVente ? computedVente.toFixed(2) : '';
-      benefice.value = computedBenef ? computedBenef.toFixed(2) : '';
-      coefficient.value = computedCoef ? computedCoef.toFixed(3) : '';
-      pourcentage.value = computedPourc ? computedPourc.toFixed(2) : '';
-      result.textContent = computedBenef ? `Bénéfice net : ${computedBenef.toFixed(2)} €` : '';
+      prixAchat.value = computedAchat? computedAchat.toFixed(2): '';
+      prixVente.value = computedVente? computedVente.toFixed(2): '';
+      benefice.value = computedBenef? computedBenef.toFixed(2): '';
+      coefficient.value = computedCoef? computedCoef.toFixed(3): '';
+      pourcentage.value = computedPourc? computedPourc.toFixed(2): '';
+      result.innerHTML = computedBenef? `Bénéfice net : ${computedBenef.toFixed(2)} € <span>🤑🤩🤌</span>`: '';
 
       localStorage.setItem('prixAchat', prixAchat.value);
       localStorage.setItem('prixVente', prixVente.value);
       localStorage.setItem('benefice', benefice.value);
       localStorage.setItem('pourcentage', pourcentage.value);
       localStorage.setItem('coefficient', coefficient.value);
-      localStorage.setItem('result', result.textContent);
+      localStorage.setItem('result', result.innerHTML);
     };
 
     btn.addEventListener('click', calculate);
 
-    resetBtn.addEventListener('click', () => {
-      prixAchat.value = '';
-      pourcentage.value = '';
-      coefficient.value = '';
-      prixVente.value = '';
-      benefice.value = '';
-      result.textContent = '';
+    resetBtn.addEventListener('click', ()=>{
+      prixAchat.value='';
+      pourcentage.value='';
+      coefficient.value='';
+      prixVente.value='';
+      benefice.value='';
+      result.innerHTML='';
       localStorage.clear();
     });
   </script>
