@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculateur de marge et bénéfice</title>
 
-  <!-- Favicon classique -->
+  <!-- Favicon -->
   <link rel="icon" href="favicon.png" type="image/png">
-
-  <!-- Icône pour iPhone / écran d’accueil -->
   <link rel="apple-touch-icon" href="favicon.png">
 
   <style>
@@ -44,6 +42,11 @@
       text-align: center;
       color: #e74c3c;
     }
+    #pourcentageDisplay {
+      margin-top: 5px;
+      color: #555;
+      font-size: 14px;
+    }
     button {
       width: 100%;
       padding: 10px;
@@ -68,8 +71,9 @@
   </div>
 
   <div class="field-group">
-    <label for="pourcentage">Pourcentage / Coefficient</label>
-    <input type="number" id="pourcentage" placeholder="Entrez % ou coefficient">
+    <label for="pourcentage">Pourcentage (%) ou Coefficient (ex: 1.25)</label>
+    <input type="number" step="any" id="pourcentage" placeholder="Entrez % ou coefficient">
+    <div id="pourcentageDisplay"></div>
   </div>
 
   <div class="field-group">
@@ -95,8 +99,9 @@
     const result = document.getElementById('result');
     const btn = document.getElementById('calculer');
     const resetBtn = document.getElementById('reset');
+    const pourcDisplay = document.getElementById('pourcentageDisplay');
 
-    // Charger les valeurs depuis localStorage au chargement
+    // Charger les valeurs depuis localStorage
     window.addEventListener('load', () => {
       if(localStorage.getItem('prixAchat')) prixAchat.value = localStorage.getItem('prixAchat');
       if(localStorage.getItem('pourcentage')) pourcentage.value = localStorage.getItem('pourcentage');
@@ -105,7 +110,27 @@
       if(localStorage.getItem('result')) result.textContent = localStorage.getItem('result');
     });
 
-    // Calcul
+    // Calcul automatique pour afficher pourcentage ↔ coefficient
+    const calculPourcCoef = () => {
+      const val = parseFloat(pourcentage.value);
+      if (isNaN(val)) {
+        pourcDisplay.textContent = '';
+        return;
+      }
+
+      if (val >= 1.2) {
+        // C'est un coefficient
+        const pourcCalc = (val - 1) * 100;
+        pourcDisplay.textContent = `Pourcentage équivalent : ${pourcCalc.toFixed(2)} %`;
+      } else {
+        // C'est un pourcentage
+        const coefCalc = 1 + val / 100;
+        pourcDisplay.textContent = `Coefficient équivalent : ${coefCalc.toFixed(3)}`;
+      }
+    };
+    pourcentage.addEventListener('input', calculPourcCoef);
+
+    // Calcul principal
     btn.addEventListener('click', () => {
       const achat = parseFloat(prixAchat.value);
       const pourc = parseFloat(pourcentage.value);
@@ -114,19 +139,17 @@
 
       let computedVente, computedBenefice, computedPourc;
 
-      // Cas 1 : prix d'achat + pourcentage donné
       if(!isNaN(achat) && !isNaN(pourc)) {
+        // Cas prix d'achat + pourcentage
         computedVente = achat * (1 + pourc / 100);
         computedBenefice = computedVente - achat;
-      }
-      // Cas 2 : prix d'achat + bénéfice donné
-      else if(!isNaN(achat) && !isNaN(benef)) {
+      } else if(!isNaN(achat) && !isNaN(benef)) {
+        // Cas prix d'achat + bénéfice
         computedVente = achat + benef;
         computedBenefice = benef;
         computedPourc = ((computedVente / achat) - 1) * 100;
-      }
-      // Cas 3 : prix de vente + prix d'achat
-      else if(!isNaN(achat) && !isNaN(vente)) {
+      } else if(!isNaN(achat) && !isNaN(vente)) {
+        // Cas prix d'achat + prix de vente
         computedVente = vente;
         computedBenefice = computedVente - achat;
         computedPourc = ((computedVente / achat) - 1) * 100;
@@ -144,6 +167,9 @@
       localStorage.setItem('prixVente', prixVente.value);
       localStorage.setItem('benefice', benefice.value);
       localStorage.setItem('result', result.textContent);
+
+      // Mettre à jour pourcentage ↔ coefficient à chaque calcul
+      calculPourcCoef();
     });
 
     // Bouton Remise à zéro
@@ -153,6 +179,7 @@
       prixVente.value = '';
       benefice.value = '';
       result.textContent = '';
+      pourcDisplay.textContent = '';
 
       localStorage.removeItem('prixAchat');
       localStorage.removeItem('pourcentage');
