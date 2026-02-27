@@ -14,8 +14,8 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      color: #f0f0f0;
-      background-color: #000000; /* fond noir */
+      color: #000000;
+      background: linear-gradient(to bottom right, #d8b4f2, #f9c0c0); /* dégradé mauve → rose */
       overflow-x: hidden;
       position: relative;
     }
@@ -25,7 +25,7 @@
       margin-bottom: 25px;
       font-size: 28px;
       font-weight: bold;
-      color: #ffffff;
+      color: #2c2c2c;
     }
 
     .field-group {
@@ -37,25 +37,25 @@
       margin-bottom: 5px;
       font-weight: bold;
       font-size: 16px;
-      color: #f0f0f0;
+      color: #2c2c2c;
     }
 
     input {
       width: 100%;
       padding: 10px;
       font-size: 16px;
-      font-weight: 600; /* un peu plus gras */
+      font-weight: 600;
       box-sizing: border-box;
-      border: 2px solid #3498db;
+      border: 2px solid #555555;
       border-radius: 6px;
-      background-color: #e0e0e0; /* fond clair pour inputs */
-      color: #000000; /* chiffres noirs */
+      background-color: rgba(255,255,255,0.9); /* fond clair semi-transparent */
+      color: #000000;
       text-align: left;
       transition: border-color 0.3s, background-color 0.3s;
     }
 
     input:focus {
-      border-color: #2980b9;
+      border-color: #333333;
       background-color: #ffffff;
       outline: none;
     }
@@ -63,10 +63,10 @@
     .taux-container {
       display: flex;
       flex-direction: column;
-      border: 2px solid #3498db;
+      border: 2px solid #555555;
       border-radius: 6px;
       padding: 8px;
-      background-color: #1a1a1a; /* fond sombre pour taux */
+      background-color: rgba(200,200,200,0.3);
     }
 
     .taux-row {
@@ -81,9 +81,9 @@
       padding: 8px;
       font-size: 16px;
       font-weight: 600;
-      border: 2px solid #3498db;
+      border: 2px solid #555555;
       border-radius: 4px;
-      background-color: #e0e0e0;
+      background-color: rgba(255,255,255,0.9);
       color: #000000;
       text-align: left;
     }
@@ -93,13 +93,13 @@
       min-width: 40px;
       text-align: center;
       font-size: 16px;
-      color: #f0f0f0;
+      color: #2c2c2c;
     }
 
     .taux-ou {
       text-align: center;
       font-weight: bold;
-      color: #aaaaaa;
+      color: #555555;
       font-size: 16px;
       margin: 4px 0;
     }
@@ -122,7 +122,7 @@
       padding: 12px;
       font-size: 16px;
       font-weight: bold;
-      background-color: #3498db;
+      background-color: #7a5af8;
       color: white;
       border: none;
       cursor: pointer;
@@ -132,16 +132,16 @@
     }
 
     button:hover {
-      background-color: #2980b9;
+      background-color: #5c3dc0;
     }
 
     #reset {
-      background-color: #e0e0e0;
+      background-color: #ffffff;
       color: #333;
     }
 
     #reset:hover {
-      background-color: #cfcfcf;
+      background-color: #dddddd;
     }
   </style>
 </head>
