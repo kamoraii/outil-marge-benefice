@@ -40,6 +40,10 @@
       align-items: center;
       justify-content: space-between;
       margin-top: 5px;
+      border: 2px solid #3498db;
+      border-radius: 6px;
+      padding: 5px;
+      background-color: #eaf2fb;
     }
     .taux-container input {
       width: 48%;
@@ -51,8 +55,8 @@
       transition: border-color 0.3s, background-color 0.3s;
     }
     .taux-container input:focus {
-      border-color: #3498db;
-      background-color: #eaf2fb;
+      border-color: #2980b9;
+      background-color: #d6eaf8;
       outline: none;
     }
     .taux-ou {
@@ -78,6 +82,7 @@
       border: none;
       cursor: pointer;
       margin-top: 10px;
+      border-radius: 4px;
     }
     button:hover {
       background-color: #2980b9;
@@ -89,26 +94,26 @@
 
   <div class="field-group">
     <label for="prixAchat">Prix d'achat net (€)</label>
-    <input type="number" id="prixAchat" placeholder="Entrez le prix d'achat">
+    <input type="number" step="any" id="prixAchat" placeholder="Entrez le prix d'achat">
   </div>
 
   <div class="field-group">
     <label>Taux applicable</label>
     <div class="taux-container">
-      <input type="number" step="any" id="pourcentage" placeholder="Pourcentage (%)">
+      <input type="number" step="any" id="pourcentage" placeholder="%">
       <div class="taux-ou">ou</div>
-      <input type="number" step="any" id="coefficient" placeholder="Coefficient (ex: 1.25)">
+      <input type="number" step="any" id="coefficient" placeholder="Coefficient">
     </div>
   </div>
 
   <div class="field-group">
     <label for="prixVente">Prix de vente (€)</label>
-    <input type="number" id="prixVente" placeholder="Entrez ou sera calculé automatiquement">
+    <input type="number" step="any" id="prixVente" placeholder="Entrez ou sera calculé automatiquement">
   </div>
 
   <div class="field-group">
     <label for="benefice">Bénéfice net (€)</label>
-    <input type="number" id="benefice" placeholder="Entrez ou sera calculé automatiquement">
+    <input type="number" step="any" id="benefice" placeholder="Entrez ou sera calculé automatiquement">
   </div>
 
   <button id="calculer">Calculer</button>
@@ -126,6 +131,12 @@
     const btn = document.getElementById('calculer');
     const resetBtn = document.getElementById('reset');
 
+    // Conversion nombre correct (virgule → point)
+    const parseNumber = (val) => {
+      if (!val) return NaN;
+      return parseFloat(val.toString().replace(',', '.'));
+    };
+
     // Charger les valeurs depuis localStorage
     window.addEventListener('load', () => {
       if(localStorage.getItem('prixAchat')) prixAchat.value = localStorage.getItem('prixAchat');
@@ -138,16 +149,16 @@
 
     // Synchronisation Pourcentage <-> Coefficient
     const syncTaux = (source) => {
-      const achat = parseFloat(prixAchat.value);
+      const achat = parseNumber(prixAchat.value);
       if (!achat) return;
 
       if (source === 'pourcentage') {
-        const val = parseFloat(pourcentage.value);
+        const val = parseNumber(pourcentage.value);
         if (!isNaN(val)) {
           coefficient.value = (1 + val / 100).toFixed(3);
         } else coefficient.value = '';
       } else if (source === 'coefficient') {
-        const val = parseFloat(coefficient.value);
+        const val = parseNumber(coefficient.value);
         if (!isNaN(val)) {
           pourcentage.value = ((val - 1) * 100).toFixed(2);
         } else pourcentage.value = '';
@@ -157,13 +168,13 @@
     pourcentage.addEventListener('input', () => syncTaux('pourcentage'));
     coefficient.addEventListener('input', () => syncTaux('coefficient'));
 
-    // Calcul complet uniquement au clic
+    // Calcul complet au clic
     const calculate = () => {
-      const achat = parseFloat(prixAchat.value);
-      const pourc = parseFloat(pourcentage.value);
-      const coef = parseFloat(coefficient.value);
-      const vente = parseFloat(prixVente.value);
-      const benef = parseFloat(benefice.value);
+      let achat = parseNumber(prixAchat.value);
+      let pourc = parseNumber(pourcentage.value);
+      let coef = parseNumber(coefficient.value);
+      let vente = parseNumber(prixVente.value);
+      let benef = parseNumber(benefice.value);
 
       let computedAchat = achat;
       let computedVente, computedBenef, computedCoef, computedPourc;
