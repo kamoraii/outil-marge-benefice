@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculateur de marge et bénéfice</title>
-  
-  <!-- Favicon -->
-<!-- Favicon -->
-<link rel="icon" href="favicon.png" type="image/png">
+
+  <!-- Favicon classique -->
+  <link rel="icon" href="favicon.png" type="image/png">
+
+  <!-- Icône pour iPhone / écran d’accueil -->
+  <link rel="apple-touch-icon" href="favicon.png">
 
   <style>
     body {
@@ -29,151 +31,100 @@
       margin-bottom: 5px;
       font-weight: bold;
     }
-    input[type="number"] {
+    input {
       width: 100%;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 16px;
       box-sizing: border-box;
     }
-    input[type="radio"] {
-      margin-right: 5px;
-    }
-    .result {
-      padding: 15px;
-      background-color: #dff0d8;
-      border: 1px solid #3c763d;
-      border-radius: 5px;
-      margin-top: 10px;
-      font-size: 1.1em;
-    }
-    .result-highlight {
-      font-size: 1.5em;
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
       font-weight: bold;
+      text-align: center;
       color: #e74c3c;
     }
-    .radio-group {
-      margin-bottom: 10px;
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
     }
   </style>
 </head>
 <body>
   <h1>Calculateur de marge et bénéfice</h1>
 
-  <!-- Prix d'achat net -->
   <div class="field-group">
-    <label for="prixAchat">Prix d’achat net (€)</label>
-    <input type="number" id="prixAchat" min="0" step="0.01">
+    <label for="prixAchat">Prix d'achat net (€)</label>
+    <input type="number" id="prixAchat" placeholder="Entrez le prix d'achat">
   </div>
 
-  <!-- Marge (%) ou Coefficient -->
   <div class="field-group">
-    <label>Choisissez ce que vous souhaitez entrer :</label>
-    <div class="radio-group">
-      <input type="radio" id="margeRadio" name="typeVar" value="marge" checked>
-      <label for="margeRadio">Marge (%)</label>
-      <input type="radio" id="coefRadio" name="typeVar" value="coef">
-      <label for="coefRadio">Coefficient</label>
-    </div>
-    <input type="number" id="margeCoef" min="0" step="0.01">
+    <label for="pourcentage">Pourcentage / Coefficient</label>
+    <input type="number" id="pourcentage" placeholder="Entrez % ou coefficient">
   </div>
 
-  <!-- Prix de vente calculé -->
   <div class="field-group">
-    <label>Prix de vente (€) (calculé automatiquement)</label>
-    <input type="number" id="prixVente" readonly>
+    <label for="prixVente">Prix de vente (€)</label>
+    <input type="number" id="prixVente" placeholder="Sera calculé automatiquement">
   </div>
 
-  <!-- Bénéfice net -->
   <div class="field-group">
-    <label>Bénéfice net (€)</label>
-    <input type="number" id="benefice" min="0" step="0.01">
+    <label for="benefice">Bénéfice net (€)</label>
+    <input type="number" id="benefice" placeholder="Sera calculé automatiquement">
   </div>
 
-  <!-- Résultats calculés -->
-  <div class="result">
-    Marge : <span id="margeResult">0</span>%<br>
-    Coefficient : <span id="coefResult">0</span>
-  </div>
-  <div class="result result-highlight">
-    Bénéfice net : <span id="beneficeResult">0</span> €
-  </div>
+  <button id="calculer">Calculer</button>
+
+  <div id="result"></div>
 
   <script>
     const prixAchat = document.getElementById('prixAchat');
-    const margeCoef = document.getElementById('margeCoef');
+    const pourcentage = document.getElementById('pourcentage');
     const prixVente = document.getElementById('prixVente');
     const benefice = document.getElementById('benefice');
-    const margeResult = document.getElementById('margeResult');
-    const coefResult = document.getElementById('coefResult');
-    const beneficeResult = document.getElementById('beneficeResult');
-    const margeRadio = document.getElementById('margeRadio');
-    const coefRadio = document.getElementById('coefRadio');
+    const result = document.getElementById('result');
+    const btn = document.getElementById('calculer');
 
-    function calculer() {
-      let P = parseFloat(prixAchat.value) || 0;
-      let M = 0;
-      let C = 0;
-      let B = parseFloat(benefice.value) || 0;
+    btn.addEventListener('click', () => {
+      const achat = parseFloat(prixAchat.value);
+      const pourc = parseFloat(pourcentage.value);
+      const vente = parseFloat(prixVente.value);
+      const benef = parseFloat(benefice.value);
 
-      // Déterminer quelle variable marge/coefficient est remplie
-      let typeVar = margeRadio.checked ? 'marge' : 'coef';
-      let inputVar = parseFloat(margeCoef.value) || 0;
+      let computedVente, computedBenefice, computedPourc;
 
-      // Cas : Prix d'achat + Marge / Coefficient
-      if (P && inputVar && !B) {
-        if (typeVar === 'marge') {
-          M = inputVar / 100;
-          C = 1 / (1 - M);
-        } else {
-          C = inputVar;
-          M = 1 - 1 / C;
-        }
-        B = P * C - P;
+      // Cas 1 : prix d'achat + pourcentage donné
+      if(!isNaN(achat) && !isNaN(pourc)) {
+        computedVente = achat * (1 + pourc / 100);
+        computedBenefice = computedVente - achat;
       }
-      // Cas : Prix d'achat + Bénéfice
-      else if (P && B && !inputVar) {
-        C = (P + B) / P;
-        M = 1 - 1 / C;
-        if (typeVar === 'marge') {
-          margeCoef.value = (M*100).toFixed(2);
-        } else {
-          margeCoef.value = C.toFixed(3);
-        }
+      // Cas 2 : prix d'achat + bénéfice donné
+      else if(!isNaN(achat) && !isNaN(benef)) {
+        computedVente = achat + benef;
+        computedBenefice = benef;
+        computedPourc = ((computedVente / achat) - 1) * 100;
       }
-      // Cas : Bénéfice + Marge / Coefficient
-      else if (B && inputVar && !P) {
-        if (typeVar === 'marge') {
-          M = inputVar / 100;
-          C = 1 / (1 - M);
-        } else {
-          C = inputVar;
-          M = 1 - 1 / C;
-        }
-        P = B / M;
+      // Cas 3 : prix de vente + prix d'achat
+      else if(!isNaN(achat) && !isNaN(vente)) {
+        computedVente = vente;
+        computedBenefice = computedVente - achat;
+        computedPourc = ((computedVente / achat) - 1) * 100;
       }
 
-      // Calcul du prix de vente
-      let PV = P * C;
+      prixVente.value = computedVente ? computedVente.toFixed(2) : '';
+      benefice.value = computedBenefice ? computedBenefice.toFixed(2) : '';
+      if(computedPourc) pourcentage.value = computedPourc.toFixed(2);
 
-      // Affichage
-      prixVente.value = PV.toFixed(2);
-      margeResult.textContent = (M*100).toFixed(2);
-      coefResult.textContent = C.toFixed(3);
-      beneficeResult.textContent = B.toFixed(2);
-
-      // Mettre à jour le champ margeCoef si nécessaire
-      if (typeVar === 'marge') margeCoef.value = (M*100).toFixed(2);
-      else margeCoef.value = C.toFixed(3);
-    }
-
-    // Événements
-    prixAchat.addEventListener('input', calculer);
-    margeCoef.addEventListener('input', calculer);
-    benefice.addEventListener('input', calculer);
-    margeRadio.addEventListener('change', calculer);
-    coefRadio.addEventListener('change', calculer);
+      result.textContent = computedBenefice ? `Bénéfice net : ${computedBenefice.toFixed(2)} €` : '';
+    });
   </script>
 </body>
 </html>
