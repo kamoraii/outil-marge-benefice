@@ -14,21 +14,20 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      color: #2c3e50;
-      background: linear-gradient(to bottom, #ffe6b3, #ffcccc);
+      color: #f0f0f0;
+      background-color: #000000; /* fond noir */
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Conteneur des billets derrière tout */
     #billets-bg {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1; /* Derrière tout */
-      pointer-events: none; /* Interactions sur le contenu restent possibles */
+      z-index: -1;
+      pointer-events: none;
       overflow: hidden;
     }
 
@@ -51,6 +50,7 @@
       text-align: center;
       margin-bottom: 25px;
       font-size: 28px;
+      color: #ffffff;
     }
 
     .field-group {
@@ -62,6 +62,7 @@
       margin-bottom: 5px;
       font-weight: bold;
       font-size: 16px;
+      color: #f0f0f0;
     }
 
     input {
@@ -71,15 +72,15 @@
       box-sizing: border-box;
       border: 2px solid #3498db;
       border-radius: 6px;
-      background-color: #ffffff;
-      color: #000000; /* Chiffres en noir */
+      background-color: #e0e0e0; /* fond clair pour les inputs */
+      color: #000000; /* texte noir pour chiffres */
       text-align: left;
       transition: border-color 0.3s, background-color 0.3s;
     }
 
     input:focus {
       border-color: #2980b9;
-      background-color: #eaf2fb;
+      background-color: #ffffff;
       outline: none;
     }
 
@@ -89,7 +90,7 @@
       border: 2px solid #3498db;
       border-radius: 6px;
       padding: 8px;
-      background-color: #d0f0fd;
+      background-color: #1a1a1a; /* fond sombre pour taux */
     }
 
     .taux-row {
@@ -105,7 +106,7 @@
       font-size: 16px;
       border: 2px solid #3498db;
       border-radius: 4px;
-      background-color: #ffffff;
+      background-color: #e0e0e0;
       color: #000000;
       text-align: left;
     }
@@ -115,12 +116,13 @@
       min-width: 40px;
       text-align: center;
       font-size: 16px;
+      color: #f0f0f0;
     }
 
     .taux-ou {
       text-align: center;
       font-weight: bold;
-      color: #555;
+      color: #aaaaaa;
       font-size: 16px;
       margin: 4px 0;
     }
@@ -206,7 +208,6 @@
   <div id="result"></div>
 
   <script>
-    // Billets derrière
     const billetsContainer = document.getElementById('billets-bg');
     const nbBillets = 25;
     for(let i=0;i<nbBillets;i++){
