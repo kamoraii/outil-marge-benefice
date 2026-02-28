@@ -114,12 +114,16 @@
       font-size: 22px;
       font-weight: bold;
       text-align: center;
-      color: #ff4c4c;
     }
 
-    #result span {
-      font-size: 20px;
-      margin-left: 8px;
+    .positif {
+      color: #2eff2e; /* vert fluo */
+      text-shadow: 0 0 8px #2eff2e;
+    }
+
+    .negatif {
+      color: #e74c3c; /* rouge */
+      text-shadow: 0 0 8px #e74c3c;
     }
 
     button {
@@ -277,7 +281,13 @@
       benefice.value = computedBenef? computedBenef.toFixed(2): '';
       coefficient.value = computedCoef? computedCoef.toFixed(3): '';
       pourcentage.value = computedPourc? computedPourc.toFixed(2): '';
-      result.innerHTML = computedBenef? `Bénéfice net : ${computedBenef.toFixed(2)} € <span>🤑🤩🤌</span>`: '';
+
+      // Gestion bénéfice/déficit avec icônes et couleurs
+      if(computedBenef>=0){
+        result.innerHTML = `Bénéfice net : <span class="positif">${computedBenef.toFixed(2)} € 🤑🤩🤌</span>`;
+      } else {
+        result.innerHTML = `Déficit : <span class="negatif">${computedBenef.toFixed(2)} € 👀😱😡😭</span>`;
+      }
 
       localStorage.setItem('prixAchat', prixAchat.value);
       localStorage.setItem('prixVente', prixVente.value);
